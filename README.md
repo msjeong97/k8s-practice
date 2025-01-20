@@ -1,7 +1,7 @@
 # k8s-practice
 
 ## Requirements
-### Kind
+### KinD
 - https://kind.sigs.k8s.io/
 - kind is a tool for running local Kubernetes clusters using Docker container "nodes".
     ```bash
@@ -13,4 +13,7 @@
 ### OpenLens
 - https://github.com/MuhammedKalkan/OpenLens/releases/tag/v6.5.2-366
 
-
+### Kubectl
+```bash
+brew install kubectl
+```
