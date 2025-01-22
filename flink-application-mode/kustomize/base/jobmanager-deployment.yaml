@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-jobmanager
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: jobmanager
+    spec:
+      containers:
+        - name: jobmanager
+          env:
+            - name: JOB_MANAGER_RPC_ADDRESS
+              value: flink-jobmanager
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6123
+              name: rpc
+            - containerPort: 6124
+              name: blob-server
+            - containerPort: 8081
+              name: webui
+          livenessProbe:
+            tcpSocket:
+              port: 6123
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          volumeMounts:
+            - name: flink-config-volume
+              mountPath: /opt/flink/conf/flink-conf.yaml
+              subPath: flink-conf.yaml
+          securityContext:
+            runAsUser: 9999
+      volumes:
+        - name: flink-config-volume
+          configMap:
+            name: flink-config
+  selector:
+    matchLabels:
+      app: flink
