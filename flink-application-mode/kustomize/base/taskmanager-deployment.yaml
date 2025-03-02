@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-taskmanager
+spec:
+  selector:
+    matchLabels:
+      app: flink
+      component: taskmanager
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: taskmanager
+    spec:
+      containers:
+      - name: taskmanager
+        env:
+          - name: JOB_MANAGER_RPC_ADDRESS
+            value: flink-jobmanager
+        imagePullPolicy: IfNotPresent
+        args: ["taskmanager"]
+        ports:
+        - containerPort: 6122
+          name: rpc
+        - containerPort: 6125
+          name: query-state
+        resources:
+          requests:
+            cpu: "1"
+            memory: "1048Mi"
+          limits:
+            cpu: "1.1"
+            memory: "1096Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 6122
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        volumeMounts:
+        - name: flink-config-volume
+          mountPath: /opt/flink/conf/flink-conf.yaml
+          subPath: flink-conf.yaml
+        securityContext:
+          runAsUser: 9999
+      volumes:
+      - name: flink-config-volume
+        configMap:
+          name: flink-config

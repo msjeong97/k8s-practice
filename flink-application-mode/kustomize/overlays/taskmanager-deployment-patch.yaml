@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-taskmanager
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: taskmanager
+        image: flink-example-job:latest
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "1024Mi"
+          limits:
+            cpu: "0.55"
+            memory: "1048Mi"

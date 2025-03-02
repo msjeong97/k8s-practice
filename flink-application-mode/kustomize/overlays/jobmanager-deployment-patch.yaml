@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-jobmanager
+spec:
+  template:
+    spec:
+      containers:
+        - name: jobmanager
+          image: flink-example-job:latest
+          args: ["standalone-job", "--job-classname", "com.example.ExampleJob"]
