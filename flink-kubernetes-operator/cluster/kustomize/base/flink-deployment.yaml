@@ -1,0 +1,38 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: flink-session-cluster
+  namespace: flink-session
+spec:
+  image: flink:1.18.1-scala_2.12-java11
+  flinkVersion: v1_18
+  flinkConfiguration:
+    jobmanager.memory.off-heap.size: 256m
+    taskmanager.memory.off-heap.size: 256m
+    taskmanager.numberOfTaskSlots: "3"
+    state.savepoints.dir: file:///opt/flink/data/savepoints
+    state.checkpoints.dir: file:///opt/flink/data/checkpoints
+    execution.checkpointing.interval: "10s"
+    job.autoscaler.enabled: "true"
+    job.autoscaler.scaling.enabled: "true"  # 스케일링 기능 활성화
+    job.autoscaler.stabilization.interval: 30s  # 안정화 간격을 30초로 줄임
+    job.autoscaler.metrics.window: 1m  # 메트릭 수집 및 평가 간격을 1분으로 줄임
+    job.autoscaler.target.utilization: "0.5"  # 목표 활용률을 50%로 설정하여 빠른 반응 유도
+    job.autoscaler.target.utilization.boundary: "0.1"  # 경계를 10%로 설정하여 민감하게 반응
+    job.autoscaler.restart.time: 1m  # 재시작 시간을 1분으로 설정하여 빠른 재시작
+    job.autoscaler.catch-up.duration: 3m  # 캐치업 기간을 3분으로 설정
+    pipeline.max-parallelism: "720"
+    web.cancel.enable: "true"
+  serviceAccount: flink
+  jobManager:
+    replicas: 1
+    resource:
+      memory: "1024m"
+      cpu: 0.3
+  taskManager:
+    replicas: 3
+    resource:
+      memory: "1024m"
+      cpu: 0.3
+
+
